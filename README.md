@@ -11,7 +11,7 @@
 ### Consultar la API
 
 ```php
-    CedulaVE::get('V', '12345678');
+CedulaVE::get('V', '12345678');
 ```
 
 ### Respuesta en formato JSON
