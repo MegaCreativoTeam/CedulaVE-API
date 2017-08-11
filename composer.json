@@ -1,0 +1,13 @@
+{
+    "name": "megacreativo/cedula-ve",
+    "description": "CedulaVE API es un permite consultar datos personales de habitantes de Venezuela inscritos en el CNE mediante su Cédula de Identidad.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "Brayan Rincon",
+        "email": "brayan262@gmail.com"
+    }],
+    "require": {},
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
