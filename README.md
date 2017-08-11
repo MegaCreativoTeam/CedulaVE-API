@@ -10,7 +10,7 @@
 La forma más fácil de instalar CedulaVE API es a través de [Composer] (https://github.com/composer/composer)
 
 ```php
-composer required megacreativo/cedulave-api
+composer require megacreativo/cedulave-api
 ```
 
 ## Ejemplo PHP
