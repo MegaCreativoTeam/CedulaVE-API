@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CedulaVE
  * 
@@ -31,7 +30,7 @@ abstract class CedulaVE
      * @param string $cedula Número de Cédula de Identidad
      * @return void
      */
-    public static function get($nacionalidad, $cedula)
+    public static function get($nacionalidad, $cedula, $json = TRUE)
     {
         $url = str_replace([':nacionalidad',':cedula'], [$nacionalidad, $cedula], self::URL);
         
@@ -44,10 +43,7 @@ abstract class CedulaVE
         $find2 = 'ADVERTENCIA';
         $pos2 = stripos($text, $find2);
 
-        $find3 = 'FALLECIDO ';
-        $pos3 = stripos($text, $find2);
-
-        if ( $pos1 AND $pos2 == FALSE AND $pos3 != FALSE ) {
+        if ( $pos1 AND $pos2 == FALSE ) {
             
             $patterns   = ['Cédula:', 'Nombre:', 'Estado:', 'Municipio:', 'Parroquia:', 'Centro:', 'Dirección:', 'SERVICIO ELECTORAL'];           
             $patterns   = trim(str_ireplace($patterns, '|', self::clean($text)));
@@ -81,7 +77,16 @@ abstract class CedulaVE
 	            ]
             ];
         }
-        return $response;
+
+        if( $json )
+        {
+            header('Content-Type: application/json; charset=utf8');
+            return json_encode($response, JSON_PRETTY_PRINT);
+        }
+        else
+        {
+            return $response;
+        }        
     }
 
 
