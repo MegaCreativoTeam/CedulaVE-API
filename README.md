@@ -7,7 +7,7 @@
 ¡Gracias por considerar contribuir al proyecto de Creative. Envíe un correo electrónico a Brayan Rincon a *brincon@megacreativo.com* para considerar su contribución.
 
 ## Instalación
-La forma más fácil de instalar CedulaVE API es a través de [Composer] (https://github.com/composer/composer)
+La forma más fácil de instalar CedulaVE API es a través de [Composer](https://github.com/composer/composer)
 
 ```php
 composer require megacreativo/cedulave-api
