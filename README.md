@@ -65,7 +65,11 @@ The software is distributed under the [MIT license](https://github.com/megacreat
 Copyright © 2018-2020. Hechi con ❤️ por Brayan Rincon y Mega Creativo [https://megacreativo.com][link-megacreativo]
 
 
+<<<<<<< HEAD
 [ico-kofi]: https://www.ko-fi.com/img/githubbutton_sm.svg
 [link-kofi]: https://ko-fi.com/N4N21DSFZ
 [link-megacreativo]: https://megacreativo.com
 [link-brayan2rincon]: https://github.com/brayan2rincon
+=======
+*CedulaVE API* es un software de código abierto con licencia bajo [MIT license](http://opensource.org/licenses/MIT).
+>>>>>>> 3027f98184226355b5bfe1a45d7a0e792d823600
