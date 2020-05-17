@@ -63,9 +63,3 @@ We use [SemVer](http://semver.org/) for versioninWg. For all available versions,
 
 The software is distributed under the [MIT license](https://github.com/megacreativo/CedulaVE-API/master/LICENSE).
 Copyright © 2018-2020. Hechi con ❤️ por Brayan Rincon y Mega Creativo [https://megacreativo.com][link-megacreativo]
-
-
-[ico-kofi]: https://www.ko-fi.com/img/githubbutton_sm.svg
-[link-kofi]: https://ko-fi.com/N4N21DSFZ
-[link-megacreativo]: https://megacreativo.com
-[link-brayan2rincon]: https://github.com/brayan2rincon
