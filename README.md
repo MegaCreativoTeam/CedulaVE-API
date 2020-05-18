@@ -58,16 +58,16 @@ vCedulaVE::info('V', '12345678', true, true);
     "website": "https://api.megacreativo.com/public/cedula-ve/v1",
     "response":
     {
-        "nac": "V", // Nacionalidad. [V|E]
-        "dni": "12345678", // Cédula de identidad
-        "name": "Jhon Alfred", // Primer y segundo nombre
-        "lastname": "Doe Law", // Primer y segundo apellido
-        "fullname": "Jhon Alfred Doe Law", // Nombre completo
-        "state": "Estado", // Estado donde se encuentra el Centro de votación
-        "municipality": "Municipio", // Municipio del Centro de votación
-        "parish": "Parroquia", // Parroquia del Centro de votación
-        "voting": "Centro de votación", // Nombre del Centro de votación        
-        "address": "Direccion" // Dirección del Centro de votación
+        "nac": "V", /* Nacionalidad. [V|E] */
+        "dni": "12345678", /* Cédula de identidad */
+        "name": "Jhon Alfred", /* Primer y segundo nombre */
+        "lastname": "Doe Law", /* Primer y segundo apellido */
+        "fullname": "Jhon Alfred Doe Law", /* Nombre completo */
+        "state": "Estado", /* Estado donde se encuentra el Centro de votación */
+        "municipality": "Municipio", /* Municipio del Centro de votación */
+        "parish": "Parroquia", /* Parroquia del Centro de votación */
+        "voting": "Centro de votación", /* Nombre del Centro de votación */     
+        "address": "Direccion" /* Dirección del Centro de votación */
     }
 }
 ```
