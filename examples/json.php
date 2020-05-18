@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../src/CedulaVE.php';
+require __DIR__.'/../src/CedulaVE.php';
 
 use MegaCreativo\API\CedulaVE;
 
