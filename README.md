@@ -1,5 +1,12 @@
 # 👋 CedulaVE API
 
+<p>
+<a href="https://github.com/megacreativo/CedulaVE-API/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/megacreativo/CedulaVE-API?style=flat-square"></a>
+<a href="https://github.com/megacreativo/CedulaVE-API/network"><img alt="GitHub forks" src="https://img.shields.io/github/forks/megacreativo/CedulaVE-API?style=flat-square"></a>
+<a href="https://github.com/megacreativo/CedulaVE-API"><img alt="GitHub license" src="https://img.shields.io/github/license/megacreativo/CedulaVE-API?style=flat-square"></a>
+<a href="https://github.styleci.io/repos/99968663"><img src="https://github.styleci.io/repos/99968663/shield?branch=master&style=flat-square" alt="StyleCI"></a>
+</p>
+
 **CedulaVE API** es un script escrito en *PHP* para consultar datos personales de habitantes de Venezuela inscritos en el *CNE* mediante su Cédula de Identidad.
 
 ## 🤝 Contibución
