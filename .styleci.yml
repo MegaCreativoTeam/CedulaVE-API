@@ -1,15 +1,16 @@
-php:
-  preset: recommended
-  risky: true
-  tab-width: 4
-  use-tabs: false
-  finder:
-    exclude:
-      - "modules"
-      - "node_modules"
-      - "storage"
-      - "vendor"
-    name: "*.php"
-    not-name:
-      - "*.blade.php"
-      - "_ide_helper.php"
+preset: recommended
+risky: false
+tab-width: 4
+use-tabs: false
+enabled:
+  - long_array_syntax
+  - strict
+  - unalign_double_arrow
+disabled:
+  - align_double_arrow
+  - short_array_syntax
+finder:
+  exclude:
+    - "tests"
+  name:
+    - "*.php"
