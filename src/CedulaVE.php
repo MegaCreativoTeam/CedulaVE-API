@@ -11,7 +11,7 @@ use Curl\Curl;
  * 
  * @package     CedulaVE
  * @author      Brayan Rincón <brayan262@gmail.com>
- * @version     1.1.0
+ * @version     1.1.1
  * @copyright   Copyright (c) 2017-2020, Brayan Rincon - MEGA CREATIVO
  * @link        https://github.com/brayan2rincon
  * @link        https://megacreativo.com
@@ -33,16 +33,16 @@ abstract class CedulaVE
     /**
 	 * The version.
 	 *
-	 * @since   1.1.0
+	 * @since   1.1.1
 	 * @access  private
 	 * @var     string    $version    The current version.
 	 */
-    private static $version = '1.1.0';
+    private static $version = '1.1.1';
 
     /**
 	 * The Author.
 	 *
-	 * @since   1.1.0
+	 * @since   1.1.1
 	 * @access  private
 	 * @var     string    $author     The current author.
 	 */
@@ -51,81 +51,87 @@ abstract class CedulaVE
     /**
 	 * The Website.
 	 *
-	 * @since   1.1.0
+	 * @since   1.1.1
 	 * @access  private
 	 * @var     string    $author     The current author.
 	 */
-    private static $website = 'http://megacreativo.com';
+    private static $api = 'https://api.megacreativo.com/public/cedula-ve/v1';
 
     /**
      * Obtiene los datos del ciudadano.
      * 
-     * @since   1.1.0
+     * @since   1.1.1
      *
      * @uses    queryCNE()
      * @uses    existData()
      * @uses    processAndCleanData()
      * @uses    formatterName()
+     * @uses    response()
      * 
-     * @param   string      $nac        Tipo de Nacionalidad [V|E]
+     * @param   string      $nac        Tipo de Nacionalidad [V|E]. Cualquier otro valor producirá un Error 301
      * @param   string      $cedula     Número de Cédula de Identidad a consultar
-     * @param   boolean     $json       Si es true devolver JSON como respuesta, en caso contrario devuelve un array 
-     * @param   boolean     $pretty     Se devuelve un JSON, este parametro establece si se aplica JSON_PRETTY_PRINT
+     * @param   boolean     $json       (Opcional) Si es true devolver JSON como respuesta, en caso contrario devuelve un ARRAY. Valor por defecto TRUE
+     * @param   boolean     $pretty     (Opcional) Se devuelve un JSON, este parametro establece si se aplica JSON_PRETTY_PRINT. Valor por defecto FALSE
      * 
      * @return  void
      */
     public static function info(string $nac, string $cedula, bool $json = true, bool $pretty = false)
     {
+        // Validaciones
+
+        if($nac != 'V' and $nac != 'E'){
+            return self::errors(1, $json, $pretty);
+        } // endif
+
+        if(empty($cedula)){
+            return self::errors(2, $json, $pretty);
+        } // endif
+
+        if(!is_numeric($cedula)){
+            return self::errors(3, $json, $pretty);
+        } // endif
+
+        // end Validaciones
+
+
         $content   = self::queryCNE($nac, $cedula);
 
-        if ( self::existData($content) ) { // Se encontraron los datos
+        if($content['error'] == true){
+            return self::errors($content['code'], $json, $pretty);
+        } // endif
 
-            $content = self::processAndCleanData($content);
+        if (self::existData($content['message'])) { // Se encontraron los datos
+
+            $content = self::processAndCleanData($content['message']);
 
             $fullname   = self::formatterName($content[2]);
 
             $response = [
                 'status' => 200,
-                'version' => '1.0.1',
-                'website' => self::$website,
+                'version' => self::$version,
+                'api' => self::$api,
             	'data' => [
-	            	'nac'            => $nac,
-	            	'dni'            => $cedula,
-	            	'name'           => $fullname['name'],
-                    'lastname'       => $fullname['lastname'],
-                    'fullname'       => $content[2],
-	            	'isadult'        => true,
-	            	'state'          => $content[3],
-	            	'municipality'   => $content[4],
-	            	'parish'         => $content[5],
-                    'voting'         => $content[6],
-                    'address_voting' => $content[7],                    
+	            	'nac'           => $nac,
+	            	'dni'           => $cedula,
+	            	'name'          => $fullname['name'],
+                    'lastname'      => $fullname['lastname'],
+                    'fullname'      => $content[2],
+	            	'state'         => $content[3],
+	            	'municipality'  => $content[4],
+	            	'parish'        => $content[5],
+                    'voting'        => $content[6],
+                    'address'       => $content[7],                    
                 ]
-            ];
+            ]; // end response
 
         } 
         else { // No se encontraron los datos
 
-            $response = [
-                'status' => 404,
-                "version" => "1.0.1",
-                "autor" => "brayan2rincon",
-            	'data' => [
-	                'nac' => $nac,
-	            	'cedula' => $cedula,
-                    'inscrito' => FALSE,
-	            ]
-            ];
+            return self::errors(4, $json, $pretty);
 
-        }
-
-        if( $json === true ) {
-            header('Content-Type: application/json; charset=utf8');
-            return json_encode($response, JSON_PRETTY_PRINT);
-        }
-        else {
-            return $response;
-        }
+        } // endif
+        
+        return self::response($response, $json, $pretty);
 
     } // end function
 
@@ -138,16 +144,23 @@ abstract class CedulaVE
      * @param   string      $dni        Cédula de identidad     
      * @return  string
      */
-    private static function queryCNE(string $nac, string $dni) : string
+    private static function queryCNE(string $nac, string $dni) : array
     {
         $url = sprintf(self::URL, $nac, $dni);
         $curl = new Curl();
         $curl->get($url);
 
         if ($curl->error) {
-            $response = $curl->errorCode . ': ' . $curl->errorMessage;
+            $response = [
+                'error' => true,
+                'code' => $curl->errorCode,
+                'message' => $curl->errorMessage
+            ];
         } else {
-            $response = strip_tags($curl->response);
+            $response = [
+                'error' => false,
+                'message' => strip_tags($curl->response)
+            ];
         }
 
         return $response;
@@ -267,5 +280,99 @@ abstract class CedulaVE
         return str_ireplace("\r", "", str_replace("\n", "", str_replace("\t", "", $r)));
         
     } // end function
+
+
+    /**
+     * Tratamiento de la respuesta en formato JSON.
+     * 
+	 * @since   1.1.1
+     * @access  private
+     * 
+     * @param   array       $content
+     * @param   array       $json
+     * @param   bool        $pretty
+     * 
+     * @return  string
+     */
+    private static function response(array $content, bool $json = true, bool $pretty = false)
+    {
+        if( $json === true ) {
+
+            header('Content-Type: application/json; charset=utf8');
+
+            if($pretty == true) {
+                return json_encode($content, JSON_PRETTY_PRINT);
+            }
+    
+            return json_encode($content);
+        }
+        else {
+            return $content;
+        }
+
+    }// end function
+
+
+    /**
+     * Tratamiento de errores.
+     * 
+	 * @since   1.1.1
+     * @access  private
+     * @uses    response()
+     * 
+     * @param   array       $content
+     * @param   array       $json
+     * @param   bool        $pretty
+     * 
+     * @return  string
+     */
+    private static function errors(int $code, bool $json = true, bool $pretty = false)
+    {
+        switch ($code) {
+            case 1:
+                //
+                $code = '301';
+                $message = 'Los datos recibidos no son correctos, Error en la nacionalidad. Valores permitidos [V|E]';
+            break;
+
+            case 2:
+                //
+                $code = '302';
+                $message = 'Los datos recibidos no son correctos. Se introdujo un caracter no numerico';
+            break;
+
+            case 3:
+                // Couldn't resolve host name: Could not resolve host: www.cn9e.gov.ve
+                $code = '303';
+                $message = 'Debe ingresar una cedula de indetidad válida. Sólo se permiten caracteres numéricos';
+            break;  
+
+            case 4:
+                $code = '404';
+                $message = 'No se encontró la cédula de identidad';
+            break;  
+
+            case 6:
+                // Couldn't resolve host name: Could not resolve host: www.cn9e.gov.ve
+                $code = '306';
+                $message = 'El Host del CNE esta fuera de linea';
+            break;            
+
+            default:
+                $code = '500';
+                $message = 'No se ha podido procesar la solicitud';
+            break;
+        }
+
+        $response = [
+            'status' => $code,
+            'version' => self::$version,
+            'api' => self::$api,
+            'data' => $message
+        ];// end response
+
+        return self::response($response, $json, $pretty);
+
+    }// end function
 
 }
