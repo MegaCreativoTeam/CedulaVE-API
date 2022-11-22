@@ -2,31 +2,23 @@
 
 namespace MegaCreativo\API;
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Curl\Curl;
 
 /**
  * CEDULA VE.
- *
- * @author      Brayan Rincón <brayan262@gmail.com>
- *
- * @version     1.1.1
- *
+ * 
+ * This Class that allows to consult personal data of inhabitants of Venezuela
+ * as full name, state and municipality of your polling place.
+ * These data are provided by the CNE database.
+ * 
+ * @author      Brayan Rincón <brayan.er.rincon@gmail.com>
+ * @version     1.1.2
  * @copyright   Copyright (c) 2017-2020, Brayan Rincon - MEGA CREATIVO
- *
- * @link        https://github.com/brayan2rincon
+ * @link        https://github.com/bracodev
  * @link        https://megacreativo.com
- *
  * @license     MIT
- */
-
-/**
- * Esta Clase que permite consultar datos personales de habitantes de Venezuela
- * como nombre completo, estado y municipio de su centro de votación.
- * estos datos son suministrados por la base de datos del CNE.
- *
- * @author     Brayan Rincon <brayan262@gmail.com>
  */
 abstract class CedulaVE
 {
@@ -34,33 +26,24 @@ abstract class CedulaVE
 
     /**
      * The version.
-     *
-     * @since   1.1.1
-     *
      * @var string The current version.
      */
-    private static $version = '1.1.1';
+    private static $version = '1.1.2';
 
     /**
      * The Author.
-     *
-     * @since   1.1.1
-     *
      * @var string The current author.
      */
-    private static $author = 'brayan2rincon';
+    private static $author = 'bracodev';
 
     /**
      * The Website.
-     *
-     * @since   1.1.1
-     *
      * @var string The current author.
      */
     private static $api = 'https://api.megacreativo.com/public/cedula-ve/v1';
 
     /**
-     * Obtiene los datos del ciudadano.
+     * Gets the person's data
      *
      * @since   1.1.1
      *
@@ -70,48 +53,89 @@ abstract class CedulaVE
      * @uses    formatterName()
      * @uses    response()
      *
-     * @param string $nac    Tipo de Nacionalidad [V|E]. Cualquier otro valor producirá un Error 301
-     * @param string $cedula Número de Cédula de Identidad a consultar
-     * @param bool   $json   (Opcional) Si es true devolver JSON como respuesta, en caso contrario devuelve un ARRAY. Valor por defecto TRUE
-     * @param bool   $pretty (Opcional) Se devuelve un JSON, este parametro establece si se aplica JSON_PRETTY_PRINT. Valor por defecto FALSE
+     * @param string  $nac      Type of Nationality [V|E]. Any other value will produce an Error 301
+     * @param string  $cedula   Identity Card number to consult
+     * @param bool    $json     (Optional) Return JSON as the response if true, otherwise return an ARRAY. Default value TRUE
+     * @param bool    $pretty   (Optional) A JSON is returned, this parameter sets whether JSON_PRETTY_PRINT is applied. Default value FALSE
      *
+     * @return void
+     */
+    public static function get(string $nac, string $cedula)
+    {
+        return self::info($nac, $cedula, false, false);
+    }
+
+    /**
+     * Gets the person data and returns it as a JSON.
+     *
+     * @uses    queryCNE()
+     * @uses    existData()
+     * @uses    processAndCleanData()
+     * @uses    formatterName()
+     * @uses    response()
+     *
+     * @param string  $nac      Type of Nationality [V|E]. Any other value will produce an Error 301
+     * @param string  $cedula   Identity Card number to consult
+     * @param bool    $pretty   (Optional) A JSON is returned, this parameter sets whether JSON_PRETTY_PRINT is applied. Default value FALSE
+     *
+     * @return void
+     */
+    public static function json(string $nac, string $cedula, bool $pretty = false)
+    {
+        return self::info($nac, $cedula, true, $pretty);
+    }
+
+
+    /**
+     * Gets the person's data.
+     *
+     * @uses    queryCNE()
+     * @uses    existData()
+     * @uses    processAndCleanData()
+     * @uses    formatterName()
+     * @uses    response()
+     *
+     * @param string  $nac      Type of Nationality [V|E]. Any other value will produce an Error 301
+     * @param string  $cedula   Identity Card number to consult
+     * @param bool    $json     (Optional) Return JSON as the response if true, otherwise return an ARRAY. Default value TRUE
+     * @param bool    $pretty   (Optional) A JSON is returned, this parameter sets whether JSON_PRETTY_PRINT is applied. Default value FALSE
      * @return void
      */
     public static function info(string $nac, string $cedula, bool $json = true, bool $pretty = false)
     {
-        // Validaciones
+        // begin valdiations
 
         if ($nac !== 'V' and $nac !== 'E') {
             return self::errors(1, $json, $pretty);
-        } // endif
+        }
 
         if (empty($cedula)) {
             return self::errors(2, $json, $pretty);
-        } // endif
+        }
 
         if (!is_numeric($cedula)) {
             return self::errors(3, $json, $pretty);
-        } // endif
+        }
 
-        // end Validaciones
+        // end valdiations
 
         $content = self::queryCNE($nac, $cedula);
 
         if ($content['error'] === true) {
             return self::errors($content['code'], $json, $pretty);
-        } // endif
+        }
 
-        if (self::existData($content['message'])) { // Se encontraron los datos
+        if (self::existData($content['message'])) {// Data not found
 
             $content = self::processAndCleanData($content['message']);
 
             $fullname = self::formatterName($content[2]);
 
-            $response = array(
+            $response = [
                 'status' => 200,
                 'version' => self::$version,
                 'api' => self::$api,
-                'data' => array(
+                'data' => [
                     'nac' => $nac,
                     'dni' => $cedula,
                     'name' => $fullname['name'],
@@ -122,9 +146,10 @@ abstract class CedulaVE
                     'parish' => $content[5],
                     'voting' => $content[6],
                     'address' => $content[7],
-                ),
-            ); // end response
-        } else { // No se encontraron los datos
+                ],
+            ]; // end response
+            
+        } else { // Data not found
 
             return self::errors(4, $json, $pretty);
         } // endif
@@ -132,13 +157,10 @@ abstract class CedulaVE
         return self::response($response, $json, $pretty);
     }
 
-    // end function
-
     /**
-     * @since   1.1.0
      *
-     * @param string $nac Nacionalidad de la persona
-     * @param string $dni Cédula de identidad
+     * @param string $nac Nationality of the person
+     * @param string $dni Identity card
      *
      * @return string
      */
@@ -164,15 +186,12 @@ abstract class CedulaVE
         return $response;
     }
 
-    // end function
-
     /**
-     * Procesa y limpia los datos.
+     * Process and clean the data
      *
-     * @param string $nac Nacionalidad de la persona
-     * @param string $dni Cédula de identidad
+     * @param string $content 
      *
-     * @return string
+     * @return array
      */
     private static function processAndCleanData(string $content): array
     {
@@ -185,10 +204,8 @@ abstract class CedulaVE
         return $response;
     }
 
-    // end function
-
     /**
-     * Verifica si existen datos de la persona.
+     * Check if the person's data exists.
      *
      * @param string $content
      *
@@ -209,13 +226,9 @@ abstract class CedulaVE
         return false;
     }
 
-    // end function
-
     /**
-     * Formatea el nombre de la persona según la cantidad de palabras que lo componen.
-     *
-     * @since   1.1.0
-     *
+     * Format the person's name according to the number of words in it.
+     * 
      * @uses    clean()
      *
      * @param string $text
@@ -228,35 +241,35 @@ abstract class CedulaVE
         $text = explode(' ', $text);
         switch (count($text)) {
 
-            // Un nombre y un apellido
+                // Un nombre y un apellido
             case 2:
                 $name = $text[0];
                 $lastname = $text[1];
-            break;
+                break;
 
-            // Dos nombre y un apellido
+                // Dos nombre y un apellido
             case 3:
-                $name = $text[0].' '.$text[1];
+                $name = $text[0] . ' ' . $text[1];
                 $lastname = $text[2];
-            break;
+                break;
 
-            // Dos nombre y dos apellidos
+                // Dos nombre y dos apellidos
             case 4:
-               $name = $text[0].' '.$text[1];
-               $lastname = $text[2].' '.$text[3];
-            break;
+                $name = $text[0] . ' ' . $text[1];
+                $lastname = $text[2] . ' ' . $text[3];
+                break;
 
             default:
                 $count = count($text);
                 $mitad = round($count / 2);
                 $name = $lastname = '';
                 for ($i = 0; $i < $mitad; $i++) {
-                    $name .= $text[$i].' ';
+                    $name .= $text[$i] . ' ';
                 }
                 for ($i = $mitad; $i < $count; $i++) {
-                    $lastname .= $text[$i].' ';
+                    $lastname .= $text[$i] . ' ';
                 }
-            break;
+                break;
         }
 
         return array(
@@ -265,13 +278,9 @@ abstract class CedulaVE
         );
     }
 
-    // end function
-
     /**
-     * Elimina saltos de líneas y tabulaciones.
-     *
-     * @since   1.1.0
-     *
+     * Remove line breaks and tabs.
+     * 
      * @param string $value
      *
      * @return string
@@ -284,12 +293,8 @@ abstract class CedulaVE
         return str_ireplace("\r", '', str_replace("\n", '', str_replace("\t", '', $r)));
     }
 
-    // end function
-
     /**
-     * Tratamiento de la respuesta en formato JSON.
-     *
-     * @since   1.1.1
+     * Treatment of the response in JSON format.
      *
      * @param array $content
      * @param array $json
@@ -312,12 +317,8 @@ abstract class CedulaVE
         }
     }
 
-    // end function
-
     /**
-     * Tratamiento de errores.
-     *
-     * @since   1.1.1
+     * Error handling
      *
      * @uses    response()
      *
@@ -334,35 +335,35 @@ abstract class CedulaVE
                 //
                 $code = '301';
                 $message = 'Los datos recibidos no son correctos, Error en la nacionalidad. Valores permitidos [V|E]';
-            break;
+                break;
 
             case 2:
                 //
                 $code = '302';
                 $message = 'Los datos recibidos no son correctos. Se introdujo un caracter no numerico';
-            break;
+                break;
 
             case 3:
                 // Couldn't resolve host name: Could not resolve host: www.cn9e.gov.ve
                 $code = '303';
                 $message = 'Debe ingresar una cedula de indetidad válida. Sólo se permiten caracteres numéricos';
-            break;
+                break;
 
             case 4:
                 $code = '404';
                 $message = 'No se encontró la cédula de identidad';
-            break;
+                break;
 
             case 6:
                 // Couldn't resolve host name: Could not resolve host: www.cn9e.gov.ve
                 $code = '306';
                 $message = 'El Host del CNE esta fuera de linea';
-            break;
+                break;
 
             default:
                 $code = '500';
                 $message = 'No se ha podido procesar la solicitud';
-            break;
+                break;
         }
 
         $response = array(
@@ -370,10 +371,8 @@ abstract class CedulaVE
             'version' => self::$version,
             'api' => self::$api,
             'data' => $message,
-        ); // end response
+        );
 
         return self::response($response, $json, $pretty);
     }
-
-    // end function
 }

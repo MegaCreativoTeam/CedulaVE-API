@@ -1,14 +1,24 @@
 {
     "name": "megacreativo/cedulave-api",
     "description": "CedulaVE API permite consultar datos personales de habitantes de Venezuela inscritos en el CNE mediante su Cédula de Identidad.",
-    "keywords": ["mega creativo", "megacreativo", "venezuela", "cedula", "dni", "cne", "consejo nacional electoral"],
+    "keywords": [
+        "mega creativo",
+        "megacreativo",
+        "venezuela",
+        "cedula",
+        "dni",
+        "cne",
+        "consejo nacional electoral"
+    ],
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/megacreativo/CedulaVE-API",
-    "authors": [{
-        "name": "Brayan Rincon",
-        "email": "brayan262@gmail.com"
-    }],
+    "authors": [
+        {
+            "name": "Brayan Rincon",
+            "email": "brayan.er.rincon@gmail.com"
+        }
+    ],
     "require": {
         "php": ">=5.6",
         "ext-curl": "*",
@@ -19,7 +29,7 @@
     },
     "autoload": {
         "psr-4": {
-            "MegaCreativo\\API\\CedulaVE": "src/"
+            "MegaCreativo\\API\\CedulaVE\\": "src/"
         }
     },
     "minimum-stability": "dev",

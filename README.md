@@ -164,7 +164,7 @@ Array
 ## 👤 Author
 
 **Brayan Rincón**
-- Github: [@brayan2rincon][link-brayan2rincon]
+- Github: [@bracodev][link-bracodev]
 
 ## 📌 Versiones 
 
@@ -173,7 +173,7 @@ We use [SemVer](http://semver.org/) for versioninWg. For all available versions,
 ## 📝 Licencia
 
 The software is distributed under the [MIT license](https://github.com/megacreativo/CedulaVE-API/master/LICENSE).
-Copyright © 2018-2020. Hecho con ❤️ por Brayan Rincon y Mega Creativo [https://megacreativo.com](https://megacreativo.com)
+Copyright © 2018-2020. Made with ❤️ by Brayan Rincon & MegaCreativo [https://megacreativo.com](https://megacreativo.com)
 
 [ico-kofi]: https://www.ko-fi.com/img/githubbutton_sm.svg
 [link-kofi]: https://ko-fi.com/N4N21DSFZ
