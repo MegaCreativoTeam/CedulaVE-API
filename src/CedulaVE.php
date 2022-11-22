@@ -55,9 +55,7 @@ abstract class CedulaVE
      *
      * @param string  $nac      Type of Nationality [V|E]. Any other value will produce an Error 301
      * @param string  $cedula   Identity Card number to consult
-     * @param bool    $json     (Optional) Return JSON as the response if true, otherwise return an ARRAY. Default value TRUE
-     * @param bool    $pretty   (Optional) A JSON is returned, this parameter sets whether JSON_PRETTY_PRINT is applied. Default value FALSE
-     *
+     * 
      * @return void
      */
     public static function get(string $nac, string $cedula)
