@@ -2,8 +2,6 @@
 
 namespace MegaCreativo\API;
 
-require __DIR__ . '/../vendor/autoload.php';
-
 use Curl\Curl;
 
 /**
